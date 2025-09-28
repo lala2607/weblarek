@@ -98,3 +98,125 @@ Presenter - презентер содержит основную логику п
 `emit<T extends object>(event: string, data?: T): void` - инициализация события. При вызове события в метод передается название события и объект с данными, который будет использован как аргумент для вызова обработчика.  
 `trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void` - возвращает функцию, при вызове которой инициализируется требуемое в параметрах событие с передачей в него данных из второго параметра.
 
+### Данные 
+#### Интерфейс IProduct 
+
+Описывает тип объекта данных товара, включает в себя id товара, название, изображение, описание, категорию и цену
+```
+interface IProduct {
+    id: string;
+    title: string;
+    image: string;
+    description: string;
+    category: string;
+    price: number|null;
+}
+```
+#### Интерфейс IBuyer 
+
+Описывает тип объекта данных покупателя и включает в себя оплату, e-mail, номер телефона и адрес
+```
+interface IBuyer {
+    payment: TPayment;
+    email: string;
+    phone: string;
+    address: string;
+}
+```
+
+#### Интерфейс IProductList
+Описывает структуру ответа от сервера при получении каталога товаров. Содержит общее количество товаров и массив объектов товаров.
+```
+interface IProductList {
+total: number;
+items: IProduct[];
+}
+```
+#### Интерфейс IOrderRequest
+Описывает структуру данных для отправки заказа на сервер. Содержит информацию о покупателе и список товаров в заказе.
+```
+interface IOrderRequest {
+payment: TPayment;
+email: string;
+phone: string;
+address: string;
+items: string[];
+}
+```
+#### Интерфейс IOrderResult
+Описывает структуру ответа от сервера после успешного оформления заказа. Содержит идентификатор созданного заказа и общую стоимость.
+```
+interface IOrderResult {
+id: string;
+total: number;
+}
+```
+
+### Модели данных
+#### Класс Products
+
+Отвечает за хранение товаров, которые можно купить в приложении.
+
+Конструктор:  
+`constructor()` - инициализирует пустой массив товаров и отсутствие выбранного товара.
+
+Поля класса:  
+`protected products: IProduct[]` - массив товаров каталога  
+`protected selectedProduct: IProduct | null` - выбранный товар для просмотра деталей
+
+Методы класса:  
+`getItems(): IProduct[]` - возвращает массив всех товаров каталога  
+`setItems(items: IProduct[]): void` - сохраняет массив товаров в модель  
+`setProduct(selectedProduct: IProduct): void` - устанавливает выбранный товар  
+`getSelectedProduct(): IProduct | null` - возвращает выбранный товар
+
+#### Класс Cart
+
+Отвечает за хранение товаров, добавленных в корзину, и расчет общей стоимости.
+
+Конструктор:  
+`constructor()` - инициализирует пустой массив товаров в корзине.
+
+Поля класса:  
+`private items: IProduct[]` - массив товаров в корзине
+
+Методы класса:  
+`addItem(item: IProduct): void` - добавляет товар в корзину  
+`removeItem(itemId: string): void` - удаляет товар из корзины по ID  
+`getCount(): number` - возвращает количество товаров в корзине  
+`getItems(): IProduct[]` - возвращает массив всех товаров в корзине  
+`getTotalPrice(): number` - вычисляет и возвращает общую стоимость товаров в корзине  
+`contains(itemId: string): boolean` - проверяет наличие товара в корзине по ID
+
+#### Класс Buyer
+
+Отвечает за хранение данных покупателя для оформления заказа.
+
+Конструктор:  
+`constructor()` - инициализирует пустые данные покупателя.
+
+Поля класса:  
+`private buyerData: IBuyer` - объект с данными покупателя
+
+Методы класса:  
+`setBuyerData(allDataBuyer: IBuyer): void` - сохраняет все данные покупателя целиком  
+`setPayment(payment: TPayment): void` - устанавливает способ оплаты  
+`setEmail(email: string): void` - устанавливает email покупателя  
+`setPhone(phone: string): void` - устанавливает телефон покупателя  
+`setAddress(address: string): void` - устанавливает адрес доставки
+
+### Слой коммуникации
+
+#### Класс WebLarekApi
+
+Отвечает за взаимодействие с API сервера «веб-ларёк», использует композицию с классом Api.
+
+Конструктор:  
+`constructor(api: IApi)` - принимает объект, реализующий интерфейс IApi
+
+Поля класса:  
+`private api: IApi` - экземпляр класса для выполнения HTTP запросов
+
+Методы класса:  
+`getProductList(): Promise<IProductList>` - выполняет GET запрос на эндпоинт `/api/product` и возвращает промис с объектом каталога товаров  
+`createOrder(order: IOrderRequest): Promise<IOrderResult>` - выполняет POST запрос на эндпоинт `/api/order` с данными заказа и возвращает промис с результатом оформления заказа.
