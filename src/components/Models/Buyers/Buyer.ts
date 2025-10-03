@@ -1,34 +1,56 @@
 import { IBuyer, TPayment } from "../../../types";
 
 export class Buyer {
-    private buyerData: IBuyer;
+    private buyer: IBuyer;
 
     constructor() {
-        this.buyerData = {
+        this.buyer = {
             payment: '' as TPayment,
             email: '',
             phone: '',
             address: ''
-        }
+        };
     }
 
-    setBuyerData(allDataBuyer: IBuyer) {
-    this.buyerData = allDataBuyer;
-  } // сохранение данных в модели, общий метод
+    setPayment(payment: TPayment) {
+        this.buyer.payment = payment;
+    }
 
-  setPayment(payment: TPayment) {
-    this.buyerData.payment = payment;
-  }
+    setEmail(email: string) {
+        this.buyer.email = email;
+    }
 
-  setEmail(email: string) {
-    this.buyerData.email = email;
-  }
+    setPhone(phone: string) {
+        this.buyer.phone = phone;
+    }
 
-  setPhone(phone: string) {
-    this.buyerData.phone = phone;
-  }
+    setAddress(address: string) {
+        this.buyer.address = address;
+    }
 
-  setAddress(address: string) {
-    this.buyerData.address = address;
-  } // отдельные методы для каждого поля
+    validate(): { [key: string]: string } {
+        const errors: { [key: string]: string } = {};
+
+        if (!this.buyer.payment) {
+            errors.payment = 'Не выбран способ оплаты';
+        }
+
+        if (!this.buyer.email) {
+            errors.email = 'Не указан email';
+        }
+
+        if (!this.buyer.phone) {
+            errors.phone = 'Не указан телефон';
+        }
+
+        if (!this.buyer.address) {
+            errors.address = 'Не указан адрес';
+        }
+
+        return errors;
+    }
+
+    getBuyerData(): IBuyer {
+        return { ...this.buyer };
+    }
 }

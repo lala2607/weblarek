@@ -204,6 +204,7 @@ total: number;
 `setEmail(email: string): void` - устанавливает email покупателя  
 `setPhone(phone: string): void` - устанавливает телефон покупателя  
 `setAddress(address: string): void` - устанавливает адрес доставки
+`validate(): { [key: string]: string }` - выполняет валидацию данных покупателя
 
 ### Слой коммуникации
 
