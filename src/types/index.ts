@@ -34,9 +34,14 @@ export interface IOrderRequest {
     phone: string;
     address: string;
     items: string[];
+    total: number;
 }
 
 export interface IProductList {
     total: number;
     items: IProduct[];
+}
+
+export interface IBasketItem extends IProduct {
+    index: number;
 }

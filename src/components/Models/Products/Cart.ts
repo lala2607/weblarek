@@ -1,18 +1,27 @@
 import { IProduct } from "../../../types";
+import { IEvents } from "../../base/Events";
 
 export class Cart {
-    private items: IProduct[];
+    private items: IProduct[] = [];
 
-    constructor() {
-        this.items = [];
-    }
+    constructor(protected events: IEvents) {}
 
     addItem(item: IProduct): void {
         this.items.push(item);
+        this.events.emit('cart:changed', { 
+            items: this.items, 
+            count: this.items.length,
+            total: this.getTotalPrice()
+        });
     }
 
     removeItem(itemId: string): void {
         this.items = this.items.filter(item => item.id !== itemId);
+        this.events.emit('cart:changed', { 
+            items: this.items, 
+            count: this.items.length,
+            total: this.getTotalPrice()
+        });
     }
 
     getCount(): number {
@@ -29,5 +38,14 @@ export class Cart {
 
     contains(itemId: string): boolean {
         return this.items.some(item => item.id === itemId);
+    }
+
+    clear(): void {
+        this.items = [];
+        this.events.emit('cart:changed', { 
+            items: this.items, 
+            count: 0,
+            total: 0
+        });
     }
 }

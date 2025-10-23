@@ -2,11 +2,32 @@
  * Базовый компонент
  */
 export abstract class Component<T> {
-    protected constructor(protected readonly container: HTMLElement) {
-        // Учитывайте что код в конструкторе исполняется ДО всех объявлений в дочернем классе
+    protected constructor(protected readonly container: HTMLElement) {}
+
+    // Установить текстовое содержимое
+    protected setText(element: HTMLElement, value: unknown) {
+        if (element) {
+            element.textContent = String(value);
+        }
     }
 
-    // Инструментарий для работы с DOM в дочерних компонентах
+    // Сменить статус блокировки
+    protected setDisabled(element: HTMLElement, state: boolean) {
+        if (element) {
+            if (state) element.setAttribute('disabled', 'disabled');
+            else element.removeAttribute('disabled');
+        }
+    }
+
+    // Скрыть элемент
+    protected setHidden(element: HTMLElement) {
+        element.style.display = 'none';
+    }
+
+    // Показать элемент
+    protected setVisible(element: HTMLElement) {
+        element.style.display = 'block';
+    }
 
     // Установить изображение с альтернативным текстом
     protected setImage(element: HTMLImageElement, src: string, alt?: string) {
@@ -17,7 +38,7 @@ export abstract class Component<T> {
             }
         }
     }
-
+    
     // Вернуть корневой DOM-элемент
     render(data?: Partial<T>): HTMLElement {
         Object.assign(this as object, data ?? {});

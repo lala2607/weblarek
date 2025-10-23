@@ -221,3 +221,93 @@ total: number;
 Методы класса:  
 `getProductList(): Promise<IProductList>` - выполняет GET запрос на эндпоинт `/api/product` и возвращает промис с объектом каталога товаров  
 `createOrder(order: IOrderRequest): Promise<IOrderResult>` - выполняет POST запрос на эндпоинт `/api/order` с данными заказа и возвращает промис с результатом оформления заказа.
+
+### Компоненты представления (View)
+
+#### ViewCard (абстрактный класс)
+
+Базовый класс для карточек товаров.
+Поля:
+`protected _title: HTMLElement` - элемент названия товара
+`protected _price: HTMLElement` - элемент цены
+`protected _category?: HTMLElement` - элемент категории (опционально)
+`protected _image?: HTMLImageElement` - элемент изображения (опционально)
+
+Методы:
+`id: string` - геттер/сеттер для ID товара
+`title: string` - сеттер для названия товара
+`price: number | null` - сеттер для цены товара
+`category: string` - сеттер для категории товара
+`image: string` - сеттер для изображения товара
+
+#### ViewCardCatalog
+
+Компонент карточки товара в каталоге. Наследуется от ViewCard.
+
+Особенности:
+Генерирует событие `card:select` при клике на карточку
+
+#### ViewCardPreview
+
+Компонент карточки товара в модальном окне предпросмотра. Наследуется от ViewCard.
+
+Дополнительные поля:
+`protected _description: HTMLElement` - элемент описания товара
+`protected _button: HTMLButtonElement` - кнопка добавления/удаления из корзины
+
+Методы:
+`description: string` - сеттер для описания товара
+`buttonText: string` - сеттер для текста кнопки
+`updateButtonState(inBasket: boolean, available: boolean): void` - обновляет состояние кнопки
+
+#### ViewCardBasket
+
+Компонент карточки товара в корзине. Наследуется от ViewCard.
+
+Дополнительные поля:
+`protected _index: HTMLElement` - элемент номера позиции
+`protected _deleteButton: HTMLButtonElement` - кнопка удаления из корзины
+
+Методы:
+
+`index: number` - сеттер для номера позиции
+Генерирует событие `card:remove` при клике на кнопку удаления
+
+#### ViewForm (абстрактный класс)
+
+Базовый класс для форм.
+
+Поля:
+`protected _submit: HTMLButtonElement` - кнопка отправки формы
+`protected _errors: HTMLElement` - элемент для отображения ошибок
+
+Методы:
+`valid: boolean` - сеттер для состояния валидности формы
+`errors: string` - сеттер для текста ошибок
+`protected abstract onSubmit(): void` - абстрактный метод для обработки отправки формы
+
+#### ViewOrderForm
+
+Компонент формы заказа. Наследуется от ViewForm.
+
+Поля:
+`protected _paymentButtons: NodeListOf<HTMLButtonElement> `- кнопки выбора способа оплаты
+`protected _addressInput: HTMLInputElement` - поле ввода адреса
+
+Методы:
+`payment: TPayment` - сеттер для способа оплаты
+`address: string` - сеттер для адреса
+Генерирует события `order:paymentChange, order:addressChange, order:submit`
+
+#### ViewContactsForm
+
+Компонент формы контактов. Наследуется от ViewForm.
+
+Поля:
+`protected _emailInput: HTMLInputElement` - поле ввода email
+`protected _phoneInput: HTMLInputElement` - поле ввода телефона
+
+Методы:
+`email: string` - сеттер для email
+`phone: string` - сеттер для телефона
+Генерирует события `contacts:emailChange, contacts:phoneChange, contacts:submit`
