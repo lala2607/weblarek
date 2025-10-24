@@ -20,6 +20,6 @@ export class ViewHeader extends Component<ViewHeaderData> {
     }
 
     set counter(value: number) {
-        this.setText(this.counterElement, value);
+        this.setText(this.counterElement, value.toString());
     }
 }

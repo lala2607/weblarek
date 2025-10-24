@@ -9,6 +9,7 @@ export class Products {
 
     setItems(items: IProduct[]): void {
         this.products = items;
+        console.log('Products loaded:', this.products.length);
         this.events.emit('products:changed', { items: this.products });
     }
 
@@ -18,10 +19,7 @@ export class Products {
 
     setProduct(product: IProduct): void {
         this.selectedProduct = product;
+        console.log('Product set for preview:', product.title);
         this.events.emit('product:selected', { product });
-    }
-
-    getSelectedProduct(): IProduct | null {
-        return this.selectedProduct;
     }
 }

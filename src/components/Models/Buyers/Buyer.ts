@@ -9,63 +9,48 @@ export class Buyer {
         address: ''
     };
 
-    constructor(protected events: IEvents) {}
+    constructor(protected events: IEvents) {} 
 
     setPayment(payment: TPayment): void {
         this.buyer.payment = payment;
-        this.events.emit('buyer:changed', { buyer: this.buyer });
+        this.events.emit('buyer:changed', { field: 'payment' });
     }
 
     setEmail(email: string): void {
         this.buyer.email = email;
-        this.events.emit('buyer:changed', { buyer: this.buyer });
+        this.events.emit('buyer:changed', { field: 'email' });
     }
 
     setPhone(phone: string): void {
         this.buyer.phone = phone;
-        this.events.emit('buyer:changed', { buyer: this.buyer });
+        this.events.emit('buyer:changed', { field: 'phone' }); 
     }
 
     setAddress(address: string): void {
         this.buyer.address = address;
-        this.events.emit('buyer:changed', { buyer: this.buyer });
-    }
-
-    validateOrder(): { [key: string]: string } {
-        const errors: { [key: string]: string } = {};
-        
-        if (!this.buyer.payment) errors.payment = 'Не выбран способ оплаты';
-        if (!this.buyer.address) errors.address = 'Не указан адрес';
-        
-        return errors;
-    }
-
-    validateContacts(): { [key: string]: string } {
-        const errors: { [key: string]: string } = {};
-        
-        if (!this.buyer.email) errors.email = 'Не указан email';
-        else if (!this.validateEmail(this.buyer.email)) errors.email = 'Некорректный email';
-        
-        if (!this.buyer.phone) errors.phone = 'Не указан телефон';
-        else if (!this.validatePhone(this.buyer.phone)) errors.phone = 'Некорректный телефон';
-        
-        return errors;
+        this.events.emit('buyer:changed', { field: 'address' });
     }
 
     validate(): { [key: string]: string } {
-        return {
-            ...this.validateOrder(),
-            ...this.validateContacts()
-        };
-    }
+        const errors: { [key: string]: string } = {};
 
-    private validateEmail(email: string): boolean {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
+        if (!this.buyer.payment) {
+            errors.payment = 'Не выбран способ оплаты';
+        }
 
-    private validatePhone(phone: string): boolean {
-        return phone.replace(/\D/g, '').length >= 11;
+        if (!this.buyer.address?.trim()) {
+            errors.address = 'Не указан адрес';
+        }
+
+        if (!this.buyer.email?.trim()) {
+            errors.email = 'Не указан email';
+        }
+
+        if (!this.buyer.phone?.trim()) {
+            errors.phone = 'Не указан телефон';
+        }
+
+        return errors;
     }
 
     getBuyerData(): IBuyer {

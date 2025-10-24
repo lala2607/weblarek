@@ -1,7 +1,13 @@
 import { Component } from "../base/Component";
 import { IEvents } from "../base/Events";
 
-export class ViewBasket extends Component<null> {
+
+interface ViewBasketData {
+    items: HTMLElement[];
+    total: number;
+}
+
+export class ViewBasket extends Component<ViewBasketData> {
     protected _list: HTMLElement;
     protected _total: HTMLElement;
     protected _button: HTMLButtonElement;

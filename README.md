@@ -311,3 +311,106 @@ total: number;
 `email: string` - сеттер для email
 `phone: string` - сеттер для телефона
 Генерирует события `contacts:emailChange, contacts:phoneChange, contacts:submit`
+
+#### ViewPage
+
+Базовый компонент страницы приложения.
+
+Поля:
+Наследует базовый функционал от Component
+Особенности:
+Является корневым контейнером для всего приложения
+Не содержит специфической логики, служит основой для композиции
+
+#### ViewHeader
+
+Компонент заголовка страницы с корзиной.
+
+Поля:
+`protected basketButton: HTMLButtonElement` - кнопка открытия корзины
+`protected counterElement: HTMLElement` - элемент счетчика товаров в корзине
+
+Методы:
+`counter: number` - сеттер для обновления счетчика товаров
+`Генерирует событие basket:open` при клике на кнопку корзины
+
+#### ViewGallery
+
+Компонент галереи товаров (каталога).
+
+Поля:
+Наследует базовый функционал от Component
+
+Методы:
+`catalog: HTMLElement[]` - сеттер для обновления списка товаров в каталоге
+
+#### ViewBasket
+
+Компонент корзины товаров.
+
+Поля:
+`protected _list: HTMLElement` - контейнер списка товаров
+`protected _total: HTMLElement` - элемент общей стоимости
+`protected _button: HTMLButtonElement` - кнопка оформления заказа
+
+Методы:
+`items: HTMLElement[]` - сеттер для обновления списка товаров
+`total: number` - сеттер для обновления общей стоимости
+Генерирует событие `basket:order` при клике на кнопку оформления заказа
+Автоматически блокирует кнопку при пустой корзине
+
+#### ViewModal
+
+Компонент модального окна.
+
+Поля:
+`protected _closeButton: HTMLButtonElement` - кнопка закрытия
+`protected _content: HTMLElement` - контейнер содержимого
+`protected _handleEscape: (event: KeyboardEvent) => void` - обработчик клавиши Escape
+
+Методы:
+`content: HTMLElement` - сеттер для содержимого модального окна
+`open(): void` - открытие модального окна
+`close(): void` - закрытие модального окна
+
+Особенности:
+Поддерживает закрытие по клику на оверлей
+Поддерживает закрытие по клавише Escape
+Предотвращает всплытие событий из содержимого
+
+#### ViewSuccess
+
+Компонент модального окна успешного оформления заказа.
+
+Поля:
+`protected _total: HTMLElement` - элемент отображения суммы заказа
+`protected _closeButton: HTMLButtonElement` - кнопка закрытия
+
+Методы:
+`total: number` - сеттер для отображения суммы заказа
+Генерирует событие `success:close` при закрытии
+
+### Презентер 
+
+Структура и зависимости
+
+Модели:
+Products - управление каталогом товаров
+Cart - управление корзиной покупок
+Buyer - управление данными покупателя
+WebLarekApi - API для работы с сервером
+
+Представления (View):
+ViewHeader - заголовок с корзиной
+ViewGallery - галерея товаров
+ViewModal - модальное окно
+ViewCardCatalog - карточка товара в каталоге
+ViewCardPreview - карточка товара в предпросмотре
+ViewCardBasket - карточка товара в корзине
+ViewBasket - представление корзины
+ViewOrderForm - форма заказа
+ViewContactsForm - форма контактов
+ViewSuccess - окно успешного заказа
+
+Система событий:
+EventEmitter - централизованная система событий

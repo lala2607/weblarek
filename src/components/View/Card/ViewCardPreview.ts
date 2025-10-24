@@ -1,25 +1,21 @@
 import { ViewCard } from './ViewCard.ts';
-import { IProduct } from '../../../types/index.ts';
 import { IEvents } from '../../base/Events.ts';
-
-interface PreviewCardData extends IProduct {
-    inBasket?: boolean;
-}
-
+import { categoryMap, CDN_URL } from '../../../utils/constants.ts';
 export class ViewCardPreview extends ViewCard {
     protected _description: HTMLElement;
     protected _button: HTMLButtonElement;
     protected _category: HTMLElement;
-    protected _text: HTMLElement;
+    protected _image: HTMLImageElement;
 
     constructor(container: HTMLElement, events: IEvents) {
         super(container, events);
-        this._description = this.container.querySelector('.card__text')!;
-        this._button = this.container.querySelector('.card__button')!;
-        this._category = this.container.querySelector('.card__category')!;
-        this._text = this.container.querySelector('.card__text')!;
+        this._description = this.container.querySelector('.card__text') as HTMLElement;
+        this._button = this.container.querySelector('.card__button') as HTMLButtonElement;
+        this._category = this.container.querySelector('.card__category') as HTMLElement;
+        this._image = this.container.querySelector('.card__image') as HTMLImageElement;
+        
         this._button.addEventListener('click', () => {
-            if (this.price === null) {
+            if (this._button.disabled) {
                 return;
             }
 
@@ -28,74 +24,54 @@ export class ViewCardPreview extends ViewCard {
             } else {
                 this.events.emit('card:remove', { id: this.id });
             }
-
-            this.events.emit('modal:close');
         });
     }
 
     set description(value: string) {
-        this.setText(this._description, value);
+        if (this._description) {
+            this._description.textContent = value;
+        }
     }
 
     set category(value: string) {
-        this.setText(this._category, value);
-        const categoryClass = this.getCategoryClass(value);
-        this._category.className = `card__category ${categoryClass}`;
-    }
-
-    set text(value: string) {
-        this.setText(this._text, value);
-    }
-
-    set buttonText(value: string) {
-        this.setText(this._button, value);
-    }
-
-    render(data: Partial<PreviewCardData>): HTMLElement {
-        super.render(data);
-        
-        if (data.description) {
-            this.description = data.description;
+        if (this._category) {
+            this._category.textContent = value;
+            const categoryClass = categoryMap[value as keyof typeof categoryMap] || 'card__category_other';
+            this._category.className = `card__category ${categoryClass}`;
         }
-
-        if (data.category) {
-            this.category = data.category;
-        }
-
-        if (data.inBasket !== undefined) {
-            this.updateButtonState(data.inBasket, data.price !== null);
-        }
-        
-        return this.container;
     }
 
-    updateButtonState(inBasket: boolean, available: boolean): void {
-        if (!available) {
-            this.buttonText = 'Недоступно';
-            this._button.disabled = true;
-            this._button.style.opacity = '0.5';
+    set inBasket(value: boolean) {
+        if (this._button.disabled) {
             return;
         }
 
-        this._button.disabled = false;
-        this._button.style.opacity = '1';
-
-        if (inBasket) {
-            this.buttonText = 'Удалить из корзины';
+        if (value) {
+            this._button.textContent = 'Удалить из корзины';
         } else {
-            this.buttonText = 'В корзину';
+            this._button.textContent = 'В корзину';
         }
     }
 
-    private getCategoryClass(category: string): string {
-        const categoryMap: { [key: string]: string } = {
-            'софт-скил': 'card__category_soft',
-            'другое': 'card__category_other',
-            'дополнительное': 'card__category_additional',
-            'кнопка': 'card__category_button',
-            'хард-скил': 'card__category_hard'
-        };
-        
-        return categoryMap[category] || 'card__category_other';
+    set image(value: string) {
+        if (value && this._image) {
+            const cleanPath = value.startsWith('/') ? value.slice(1) : value;
+            const fullImageUrl = CDN_URL + '/' + cleanPath;
+            this._image.src = fullImageUrl;
+            this._image.alt = this.title || 'Изображение товара';
+        }
+    }
+
+    set price(value: number | null) {
+        if (value === null) {
+            this.setText(this._price, 'Бесценно');
+            this._button.textContent = 'Недоступно';
+            this.setDisabled(this._button, true);
+            this._button.classList.add('card__button_disabled');
+        } else {
+            this.setText(this._price, `${value} синапсов`);
+            this.setDisabled(this._button, false);
+            this._button.classList.remove('card__button_disabled');
+        }
     }
 }
